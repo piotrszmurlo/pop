@@ -28,19 +28,18 @@ def fetch_structure_data(data_path):
     return (nodes_, links_, demands_)
 
 
-if __name__ == '__main__':
-    nodes_, links_, demands_ = fetch_structure_data("polska.xml")
-    pprint(nodes_)
-    pprint(links_)
-    pprint(demands_)
-    gene = {
-        "demand_id": "Demand_0_10",
-        'transponders' : [{'capacity' : 40,
-                           'path': ['Link_0_10',
-                                    'Link_1_10',
-                                    'Link_1_7',
-                                    'Link_7_9',
-                                    'Link_2_9']
-                           }]
-    }
+nodes_, links_, demands_ = fetch_structure_data("polska.xml")
+pprint(nodes_)
+pprint(links_)
+pprint(demands_)
+    # gene = {
+    #     "demand_id": "Demand_0_10",
+    #     'transponders' : [{'capacity' : 40,
+    #                        'path': ['Link_0_10',
+    #                                 'Link_1_10',
+    #                                 'Link_1_7',
+    #                                 'Link_7_9',
+    #                                 'Link_2_9']
+    #                        }]
+    # }
 
