@@ -12,7 +12,7 @@ def sublist(lst1, lst2):
     return True
 
 def transponder_set(demand):
-    transponders = [40, 100, 200]
+    transponders = [40, 60, 80]
     # znalezienie minimalnej liczby minimalnych transponderów która zaspokoi zapotrzebowanie
     min_tr_num = ceil(demand/transponders[0])
     mid_tr_num = ceil(demand/transponders[1])

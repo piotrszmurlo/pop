@@ -4,7 +4,13 @@ from pprint import pprint
 from transponder_set import transponder_set
 
 EPOCHS = 10
-TRANSPONDERS = (0, 100, 200, 400)
+LAMBDA_PENALTY = 100
+TRANSPONDER_COST = {
+    40: 1,
+    60: 3,
+    80: 7
+}
+
 
 def init_population(demands_, population_count):
     population = []
@@ -12,18 +18,16 @@ def init_population(demands_, population_count):
     for _ in range(population_count):
         for demand in demands_:
             chromosome[demand] = []
-            possible_transponders = transponder_set(int(demands_[demand][2].removesuffix(".0")))
-            for path in demands_[demand][3]:
-                chromosome[demand].append((path, choice(TRANSPONDERS)))
+            possible_transponder_sets = transponder_set(int(demands_[demand][2].removesuffix(".0")))
+            transponder_set_ = choice(possible_transponder_sets)
+            paths = demands_[demand][3]
+            for transponder in transponder_set_:
+                chromosome[demand].append((choice(paths), transponder))
         population.append(chromosome)
     return population
-    # chromosome[demand].append((path, choice(transponder_set(int(demands_[demand][2].removesuffix(".0"))))))
 
 
 def evaluate(chromosome, demands):
-    capacity_too_high_param = 1
-    capacity_too_low_param = 10
-    lambda_penalty = 100
     penalty = 0
     links = {'Link_0_10': 0,
              'Link_0_2': 0,
@@ -43,21 +47,18 @@ def evaluate(chromosome, demands):
              'Link_6_11': 0,
              'Link_7_11': 0,
              'Link_7_9': 0}
+    total_cost = 0
     for demand in chromosome:
-        transponder_capacity_sum = 0
-        for path, transponder_capacity in chromosome[demand]:
-            if transponder_capacity > 0:
-                transponder_capacity_sum += transponder_capacity
-                for link in path:
-                    links[link] += 1
-        target_demand = int(demands[demand][2].removesuffix(".0"))
-        if transponder_capacity_sum > target_demand:  # kara za za duza przepustowość
-            penalty += capacity_too_high_param * (transponder_capacity_sum - target_demand)
-        elif transponder_capacity_sum < target_demand:  # kara za za mala przepustowość
-            penalty += capacity_too_low_param * (target_demand - transponder_capacity_sum)
+        demand_cost = 0
+        for path, transponders in chromosome[demand]:
+            demand_cost += TRANSPONDER_COST[transponders]
+            for link in path:
+                links[link] += 1
+        total_cost += demand_cost
     for lambdas_used in links.values():
         if lambdas_used > 96:
-            penalty += lambda_penalty * lambdas_used
+            penalty += LAMBDA_PENALTY * lambdas_used
+    penalty += total_cost
     return penalty
 
 
@@ -69,5 +70,5 @@ def loop():
 if __name__ == '__main__':
     nodes_, links_, demands_ = fetch_structure_data("polska.xml")
     population = init_population(demands_, 1)
-    print(evaluate(population[0], demands_))
-    pprint(demands_)
+    pprint(evaluate(population[0], demands_))
+    # pprint(population[0])
