@@ -12,13 +12,10 @@ def sublist(lst1, lst2):
     return True
 
 def transponder_set(demand):
-    transponders = [40, 100, 200]
+    transponders = [40, 200, 400]
     # znalezienie minimalnej liczby minimalnych transponderów która zaspokoi zapotrzebowanie
-    min_tr_num = ceil(demand/transponders[0])
-    mid_tr_num = ceil(demand/transponders[1])
-    max_tr_num = ceil(demand/transponders[2])
-    # transponders = tr_num*transponders
-    transponders = min_tr_num*[transponders[0]] + mid_tr_num*[transponders[1]] + max_tr_num*[transponders[2]] 
+    tr_num = ceil(demand/min(transponders))
+    transponders = tr_num*transponders
     transponders_subsets = list(chain.from_iterable(combinations(transponders, r) for r in range(len(transponders)+1)))[1:]
     for i in range(len(transponders_subsets)):
         transponders_subsets[i] = list(transponders_subsets[i])
@@ -39,7 +36,7 @@ def transponder_set(demand):
                         if subset != inner_subset:
                             try:
                                 temp_transponders_subsets.remove(inner_subset)
-                            except:
+                            except:ra
                                 pass
             else:
                 try:
@@ -50,4 +47,4 @@ def transponder_set(demand):
             break
     return(temp_transponders_subsets)  
     
-print(transponder_set(140))
+print(transponder_set(320))
