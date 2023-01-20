@@ -2,6 +2,12 @@ from math import ceil
 from itertools import chain, combinations
 from copy import deepcopy
 
+TRANSPONDER_COST = {
+    40: 1,
+    60: 3,
+    80: 7
+}
+
 def sublist(lst1, lst2):
     from collections import Counter
     c1 = Counter(lst1)
@@ -12,7 +18,7 @@ def sublist(lst1, lst2):
     return True
 
 def transponder_set(demand):
-    transponders = [40, 60, 80]
+    transponders = [x for x in TRANSPONDER_COST]
     # znalezienie minimalnej liczby minimalnych transponderów która zaspokoi zapotrzebowanie
     min_tr_num = ceil(demand/transponders[0])
     mid_tr_num = ceil(demand/transponders[1])
@@ -50,4 +56,3 @@ def transponder_set(demand):
             break
     return(temp_transponders_subsets)  
     
-print(transponder_set(140))
