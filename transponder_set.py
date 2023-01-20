@@ -45,6 +45,7 @@ def transponder_set(demand):
                     pass
         except:
             break
-    return(temp_transponders_subsets)  
-    
-transponder_set(320)
+    return(temp_transponders_subsets)
+
+if __name__ == '__main__':
+    print(transponder_set(320))

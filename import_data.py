@@ -28,10 +28,11 @@ def fetch_structure_data(data_path):
     return (nodes_, links_, demands_)
 
 
-nodes_, links_, demands_ = fetch_structure_data("polska.xml")
-pprint(nodes_)
-pprint(links_)
-pprint(demands_)
+if __name__ == '__main__':
+    nodes_, links_, demands_ = fetch_structure_data("polska.xml")
+    # pprint(nodes_)
+    pprint(links_)
+    pprint(demands_)
     # gene = {
     #     "demand_id": "Demand_0_10",
     #     'transponders' : [{'capacity' : 40,
