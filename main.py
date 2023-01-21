@@ -4,10 +4,13 @@ from random import choice, sample, shuffle, randrange
 from copy import deepcopy
 from import_data import fetch_structure_data
 from transponder_set import transponder_set, TRANSPONDER_COST
+from export_data import export_data
+from os.path import join
 import matplotlib.pyplot as plt
 
+PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 1
+EPOCHS = 5
 LAMBDA_PENALTY = 100
 POPULATION_SIZE = 10
 ELITE_SIZE = 0.2
@@ -178,6 +181,19 @@ def plot_best(best_solutions):
               'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
               ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
     plt.show()
+    transponders_capacities = list(TRANSPONDER_COST.keys())
+    plot_name = ["epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
+                " cross r.: ", str(CROSS_P), " mut.r.: ", str(MUTATE_P), " tr.1: ", str(transponders_capacities[0]),
+                " tr.2: ", str(transponders_capacities[1]), " tr.3: ", str(transponders_capacities[2]), ".png"]
+    path_suf = ""
+    for p in plot_name:
+        path_suf += p
+    path = join(PLOT_PATH, path_suf)
+    print("PLOT PATH")
+    print(path)
+    
+    plt.savefig(path)
+        
 
 def loop():
     best_solutions = []
@@ -192,6 +208,7 @@ def loop():
         print("BEST INDIVIDUAL FIT FUNCTION")
         print(evaluate(best_individual))
         best_solutions.append(evaluate(best_individual))
+    
     plot_best(best_solutions)
 
 if __name__ == '__main__':
