@@ -4,13 +4,15 @@ from random import choice, sample, shuffle, randrange
 from copy import deepcopy
 from import_data import fetch_structure_data
 from transponder_set import transponder_set, TRANSPONDER_COST
+import matplotlib.pyplot as plt
 
-EPOCHS = 10
+
+EPOCHS = 1
 LAMBDA_PENALTY = 100
 POPULATION_SIZE = 10
 ELITE_SIZE = 0.2
 CROSS_P = 0.7
-MUTATE_P = 0.2
+MUTATE_P = 0.1
 
 
 def init_population(demands_, population_count):
@@ -65,7 +67,7 @@ def evaluate(chromosome):
     return penalty
 
 
-def reproduce(population):
+def selection(population):
     penalties = [(index, evaluate(chromosome)) for index, chromosome in enumerate(population)]
     # sum_penalties = 0
     # for penalty in penalties:
@@ -82,10 +84,26 @@ def reproduce(population):
             new_population.append(population[x[0]])
     return new_population
 
-def cross_and_mutate(population):
+def cross(population):
     cross_population = deepcopy(population)
-    cross_population = cross_population[:(2*int(len(cross_population)*CROSS_P))//2 + 1]
-    new_population = []
+    temp_cross_population = []
+    crosses_num = int(len(population)*CROSS_P)
+    if crosses_num%2 == 1:
+        crosses_num -= 1
+    indv_ids = list(range(len(population)))
+    # creation of list of individuals that will be crossed
+    for i in range(crosses_num):
+        r = random.randrange(len(indv_ids))
+        ind_id = indv_ids.pop(r)
+        temp_cross_population.append(cross_population[ind_id])
+    
+    # creation of list of individuals that will remain uncrossed
+    uncrossed_individuals = []
+    for i in indv_ids:
+        uncrossed_individuals.append(cross_population[i])
+    
+    cross_population = temp_cross_population
+    crossed_population = []
     while len(cross_population) > 0:
         id_1 = randrange(0, len(cross_population))
         chrom_1 = cross_population.pop(id_1)
@@ -108,28 +126,73 @@ def cross_and_mutate(population):
             if i >= r:
                 new_chrom_1[key] = value
             i += 1
-        new_population.append(new_chrom_1)
-        new_population.append(new_chrom_1)
-    new_population += cross_population[(2*int(len(cross_population)*CROSS_P))//2 + 1:]
-    return new_population
+        crossed_population.append(new_chrom_1)
+        crossed_population.append(new_chrom_1)
+    crossed_population += uncrossed_individuals
+    return crossed_population
+
+def mutate(population, demands_):
+    mutate_population = deepcopy(population)
+    for i in range(len(mutate_population)):
+        for dem_id, demand in mutate_population[i].items():
+            if random.random() < MUTATE_P:
+                possible_transponder_sets = transponder_set(int(demands_[dem_id][2].removesuffix(".0")))
+                transponder_set_ = choice(possible_transponder_sets)
+                paths = demands_[dem_id][3]
+                new_gene = []
+                for transponder in transponder_set_:
+                    new_gene.append((choice(paths), transponder))
+                mutate_population[i][dem_id] = new_gene
+    return mutate_population
+
+def create_new_population(population, demands_):
+    # reproduction
+    selected_population = selection(population)
+    # crossing
+    crossed_population = cross(selected_population)
+    # mutation
+    muted_population = mutate(crossed_population, demands_)
+    return muted_population
+
+def get_best_individual(population):
+    best_eval = 10000000
+    best_individual = 0
+    for i in range(len(population)):
+        temp_eval = evaluate(population[i])
+        if temp_eval <= best_eval:
+            best_eval = temp_eval
+            best_individual = i
+    
+    print("BEST INDIVIDUAL")
+    print(best_individual)
+    print("LEN POPULATION")
+    print(len(population))
+    return population[best_individual]
+
+def plot_best(best_solutions):
+    epochs = range(1, len(best_solutions)+1)
+    plt.plot(epochs, best_solutions)
+    plt.xlabel('Epoki')
+    plt.ylabel('Funkcja dopasowania')
+    plt.title('Wykres dopasowania najlepszego osobnika z populacji dla parametrów: ' +
+              'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
+              ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
+    plt.show()
 
 def loop():
+    best_solutions = []
     population = init_population(demands_, POPULATION_SIZE)
-    new_population = reproduce(population)
-    for f in population:
-        print(evaluate(f))
-    print("------------------------------------")
-    for f in new_population:
-        print(evaluate(f))
-    cross_population = cross_and_mutate(population)
-    print(len(cross_population))
+    new_population = create_new_population(population, demands_)
     for epoch in range(EPOCHS):
-        new_population = population
-        # mutacja
-
-        # rekombinacja
-        pass
-
+        print("------------------------------------------")
+        print("EPOCH: " + str(epoch))
+        new_population = create_new_population(population, demands_)
+        population = new_population
+        best_individual = get_best_individual(population)
+        print("BEST INDIVIDUAL FIT FUNCTION")
+        print(evaluate(best_individual))
+        best_solutions.append(evaluate(best_individual))
+    plot_best(best_solutions)
 
 if __name__ == '__main__':
     nodes_, links_, demands_ = fetch_structure_data("polska.xml")
