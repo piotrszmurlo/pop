@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 20
+EPOCHS = 100
 LAMBDA_PENALTY = 100
 POPULATION_SIZE = 10
-ELITE_SIZE = 0
+ELITE_SIZE = 2
 CROSS_P = 0.7
 MUTATE_P = 0.1
-MAX_LAMBDAS_USED = 70
+MAX_LAMBDAS_USED = 96
 
 
 def init_population(demands_, population_count):
@@ -174,45 +174,47 @@ def get_best_individual(population):
 
 def plot_best(best_solutions):
     epochs = range(1, len(best_solutions) + 1)
+    local_fig = plt.figure(1)
     plt.plot(epochs, best_solutions)
     plt.xlabel('Epoki')
     plt.ylabel('Funkcja dopasowania')
-    plt.title('najlepszy osobnik z populacji: ' +
-              'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
-              ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
-    plt.show()
     transponders_capacities = list(TRANSPONDER_COST.keys())
-    plot_name = ["epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
-                 " cross r.: ", str(CROSS_P), " mut.r.: ", str(MUTATE_P), " tr.1: ", str(transponders_capacities[0]),
-                 " tr.2: ", str(transponders_capacities[1]), " tr.3: ", str(transponders_capacities[2]), ".png"]
+    plt.title('Najlepszy osobnik: ' +
+              'epoki: ' + str(EPOCHS) + ", pop.: " + str(POPULATION_SIZE) + ", kara: " + str(LAMBDA_PENALTY) +
+              ', cross r.: ' + str(CROSS_P) +  ", elite" + (str(ELITE_SIZE)) + ", tr.1: " + str(transponders_capacities[0]) +
+                 ", tr.2: " + str(transponders_capacities[1]))
+    plot_name = ["local_best_epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
+                 " cross r.: ", str(CROSS_P), "elite", (str(ELITE_SIZE)), " tr.1: ", str(transponders_capacities[0]),
+                 " tr.2: ", str(transponders_capacities[1]), ".png"]    
     path_suf = ""
     for p in plot_name:
         path_suf += p
     path = join(PLOT_PATH, path_suf)
-    # print("PLOT PATH")
-    # print(path)
+    return local_fig
 
     # plt.savefig(path)
 
 def plot_best_min(best_solutions_min):
     epochs = range(1, len(best_solutions_min) + 1)
+    global_fig = plt.figure(2)
     plt.plot(epochs, best_solutions_min)
     plt.xlabel('Epoki')
-    plt.ylabel('Funkcja dopasowania')
-    plt.title('Najlepszy osobnik: ' +
-              'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
-              ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
-    plt.show()
+    plt.ylabel('bestFunkcja dopasowania')
     transponders_capacities = list(TRANSPONDER_COST.keys())
-    plot_name = ["epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
-                 " cross r.: ", str(CROSS_P), " mut.r.: ", str(MUTATE_P), " tr.1: ", str(transponders_capacities[0]),
-                 " tr.2: ", str(transponders_capacities[1]), " tr.3: ", str(transponders_capacities[2]), ".png"]
+    plt.title('Najlepszy osobnik: ' +
+              'epoki: ' + str(EPOCHS) + ", pop.: " + str(POPULATION_SIZE) + ", kara: " + str(LAMBDA_PENALTY) +
+              ', cross r.: ' + str(CROSS_P) +  ", elite" + (str(ELITE_SIZE)) + ", tr.1: " + str(transponders_capacities[0]) +
+                 ", tr.2: " + str(transponders_capacities[1]))
+    # local_fig.show()
+    plot_name = ["local_best_epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
+                 " cross r.: ", str(CROSS_P), "elite", (str(ELITE_SIZE)), " tr.1: ", str(transponders_capacities[0]),
+                 " tr.2: ", str(transponders_capacities[1]), ".png"]
     path_suf = ""
     for p in plot_name:
         path_suf += p
     path = join(PLOT_PATH, path_suf)
-    # print("PLOT PATH")
-    # print(path)
+    return global_fig
+    # plt.savefig(path)
 
 
 def loop():
@@ -233,8 +235,11 @@ def loop():
             best_solutions_min_solution.append(best_solutions_min_solution[-1])
         print("BEST INDIVIDUAL FIT FUNCTION")
         print(best_solutions_min_solution[-1])
-    plot_best(best_solutions)
-    plot_best_min(best_solutions_min_solution)
+    # plot_best(best_solutions)
+    # plot_best_min(best_solutions_min_solution)
+    local_fig = plot_best(best_solutions)
+    global_fig = plot_best_min(best_solutions_min_solution)
+    plt.show()
     print(f"FINAL BEST SOLUTION FIT: {best_solutions_min_solution[-1]}")
 
 
