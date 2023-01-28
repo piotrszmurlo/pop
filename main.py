@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 5
+EPOCHS = 100
 LAMBDA_PENALTY = 100
 POPULATION_SIZE = 10
 ELITE_SIZE = 0.2

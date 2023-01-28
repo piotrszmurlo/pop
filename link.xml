@@ -1,0 +1,15 @@
+<link id="Link_0_2">
+    <source>Gdansk</source>
+    <target>Kolobrzeg</target>
+    <setupCost>272.0</setupCost>
+    <additionalModules>
+     <addModule>
+      <capacity>155.0</capacity>
+      <cost>272.0</cost>
+     </addModule>
+     <addModule>
+      <capacity>622.0</capacity>
+      <cost>816.0</cost>
+     </addModule>
+    </additionalModules>
+</link>

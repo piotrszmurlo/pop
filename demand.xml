@@ -1,0 +1,20 @@
+<demand id="Demand_0_1">
+    <source>Gdansk</source>
+    <target>Bydgoszcz</target>
+    <demandValue>195.0</demandValue>
+    <admissiblePaths>
+     <admissiblePath id="P_0">
+      <linkId>Link_0_2</linkId>
+      <linkId>Link_1_2</linkId>
+     </admissiblePath>
+     <admissiblePath id="P_1">
+      <linkId>Link_0_10</linkId>
+      <linkId>Link_1_10</linkId>
+     </admissiblePath>
+     <admissiblePath id="P_2">
+      <linkId>Link_0_2</linkId>
+      <linkId>Link_2_9</linkId>
+      <linkId>Link_7_9</linkId>
+      <linkId>Link_1_7</linkId>
+     </admissiblePath>
+<demand>
