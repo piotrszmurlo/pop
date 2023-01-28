@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 10
+EPOCHS = 20
 LAMBDA_PENALTY = 100
-POPULATION_SIZE = 10
+POPULATION_SIZE = 100
 ELITE_SIZE = 10
 CROSS_P = 0.7
 MUTATE_P = 0.1
@@ -177,7 +177,7 @@ def plot_best(best_solutions):
     plt.plot(epochs, best_solutions)
     plt.xlabel('Epoki')
     plt.ylabel('Funkcja dopasowania')
-    plt.title('Wykres dopasowania najlepszego osobnika z populacji dla parametrów: ' +
+    plt.title('najlepszy osobnik z populacji: ' +
               'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
               ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
     plt.show()
@@ -199,7 +199,7 @@ def plot_best_min(best_solutions_min):
     plt.plot(epochs, best_solutions_min)
     plt.xlabel('Epoki')
     plt.ylabel('Funkcja dopasowania')
-    plt.title('Wykres dopasowania dotychczasowego najlepszego osobnika: ' +
+    plt.title('Najlepszy osobnik: ' +
               'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
               ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
     plt.show()
@@ -226,13 +226,13 @@ def loop():
         population = new_population
         best_individual = get_best_individual(population)
         best_fit_individual = evaluate(best_individual, True)
-        print("BEST INDIVIDUAL FIT FUNCTION")
-        print(best_fit_individual)
         best_solutions.append(best_fit_individual)
         if all(element > best_fit_individual for element in best_solutions_min_solution):
             best_solutions_min_solution.append(best_fit_individual)
         else:
             best_solutions_min_solution.append(best_solutions_min_solution[-1])
+        print("BEST INDIVIDUAL FIT FUNCTION")
+        print(best_solutions_min_solution[-1])
     plot_best(best_solutions)
     plot_best_min(best_solutions_min_solution)
     print(f"FINAL BEST SOLUTION FIT: {best_solutions_min_solution[-1]}")
