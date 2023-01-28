@@ -227,12 +227,15 @@ def loop():
         new_population = create_new_population(population, demands_)
         population = new_population
         best_individual = get_best_individual(population)
-        best_fit_individual = evaluate(best_individual, True)
+        best_fit_individual = evaluate(best_individual)
         best_solutions.append(best_fit_individual)
         if all(element > best_fit_individual for element in best_solutions_min_solution):
             best_solutions_min_solution.append(best_fit_individual)
+            last_best = best_individual
+            evaluate(last_best, True)
         else:
             best_solutions_min_solution.append(best_solutions_min_solution[-1])
+            evaluate(last_best, True)
         print("BEST INDIVIDUAL FIT FUNCTION")
         print(best_solutions_min_solution[-1])
     # plot_best(best_solutions)
