@@ -16,6 +16,7 @@ POPULATION_SIZE = 10
 ELITE_SIZE = 0
 CROSS_P = 0.7
 MUTATE_P = 0.1
+MAX_LAMBDAS_USED = 70
 
 
 def init_population(demands_, population_count):
@@ -33,7 +34,7 @@ def init_population(demands_, population_count):
     return population
 
 
-def evaluate(chromosome):
+def evaluate(chromosome, print_if_lambdas_exceeded=False):
     penalty = 0
     links = {
         'Link_0_10': 0,
@@ -64,8 +65,10 @@ def evaluate(chromosome):
                 links[link] += 1
         total_cost += demand_cost
     for lambdas_used in links.values():
-        if lambdas_used > 70:
+        if lambdas_used > MAX_LAMBDAS_USED:
             penalty += LAMBDA_PENALTY * lambdas_used
+            if print_if_lambdas_exceeded:
+                print("Chromosome exceeds lambda capacity")
     penalty += total_cost
     return penalty
 
@@ -166,10 +169,6 @@ def get_best_individual(population):
         if temp_eval <= best_eval:
             best_eval = temp_eval
             best_individual = i
-
-    print("BEST INDIVIDUAL")
-    print(best_individual)
-    print("LEN POPULATION")
     return population[best_individual]
 
 
@@ -178,7 +177,7 @@ def plot_best(best_solutions):
     plt.plot(epochs, best_solutions)
     plt.xlabel('Epoki')
     plt.ylabel('Funkcja dopasowania')
-    plt.title('Wykres dopasowania najlepszego osobnika z populacji dla parametrów: ' +
+    plt.title('najlepszy osobnik z populacji: ' +
               'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
               ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
     plt.show()
@@ -200,7 +199,7 @@ def plot_best_min(best_solutions_min):
     plt.plot(epochs, best_solutions_min)
     plt.xlabel('Epoki')
     plt.ylabel('Funkcja dopasowania')
-    plt.title('Wykres dopasowania dotychczasowego najlepszego osobnika: ' +
+    plt.title('Najlepszy osobnik: ' +
               'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
               ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
     plt.show()
@@ -212,8 +211,8 @@ def plot_best_min(best_solutions_min):
     for p in plot_name:
         path_suf += p
     path = join(PLOT_PATH, path_suf)
-    print("PLOT PATH")
-    print(path)
+    # print("PLOT PATH")
+    # print(path)
 
 
 def loop():
@@ -226,15 +225,17 @@ def loop():
         new_population = create_new_population(population, demands_)
         population = new_population
         best_individual = get_best_individual(population)
-        print("BEST INDIVIDUAL FIT FUNCTION")
-        best_fit_individual = evaluate(best_individual)
-        print(best_fit_individual)
+        best_fit_individual = evaluate(best_individual, True)
         best_solutions.append(best_fit_individual)
         if all(element > best_fit_individual for element in best_solutions_min_solution):
             best_solutions_min_solution.append(best_fit_individual)
-        print(best_solutions_min_solution)
+        else:
+            best_solutions_min_solution.append(best_solutions_min_solution[-1])
+        print("BEST INDIVIDUAL FIT FUNCTION")
+        print(best_solutions_min_solution[-1])
     plot_best(best_solutions)
     plot_best_min(best_solutions_min_solution)
+    print(f"FINAL BEST SOLUTION FIT: {best_solutions_min_solution[-1]}")
 
 
 if __name__ == '__main__':
