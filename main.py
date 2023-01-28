@@ -10,9 +10,10 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 5
+EPOCHS = 20
 LAMBDA_PENALTY = 100
-POPULATION_SIZE = 10
+POPULATION_SIZE = 100
+ELITE_SIZE = 10
 CROSS_P = 0.7
 MUTATE_P = 0.1
 
@@ -63,7 +64,7 @@ def evaluate(chromosome):
                 links[link] += 1
         total_cost += demand_cost
     for lambdas_used in links.values():
-        if lambdas_used > 80:
+        if lambdas_used > 70:
             penalty += LAMBDA_PENALTY * lambdas_used
     penalty += total_cost
     return penalty
@@ -71,13 +72,10 @@ def evaluate(chromosome):
 
 def selection(population):
     penalties = [(index, evaluate(chromosome)) for index, chromosome in enumerate(population)]
-    # sum_penalties = 0
-    # for penalty in penalties:
-    #     sum_penalties += 1/penalty
-    # fit_list = []
-    # for index, chromosome in enumerate(population):
-    #     fit_list.append((1/penalties[index])/sum_penalties)
+    sorted_penalties = sorted(penalties, key=lambda t: t[1])
     new_population = []
+    for i in range(ELITE_SIZE):
+        new_population.append(population[sorted_penalties[i][0]])
     while len(new_population) != len(population):
         x, y = sample(penalties, 2)
         if x[1] >= y[1]:
@@ -172,7 +170,6 @@ def get_best_individual(population):
     print("BEST INDIVIDUAL")
     print(best_individual)
     print("LEN POPULATION")
-    print(len(population))
     return population[best_individual]
 
 
@@ -193,14 +190,35 @@ def plot_best(best_solutions):
     for p in plot_name:
         path_suf += p
     path = join(PLOT_PATH, path_suf)
+    # print("PLOT PATH")
+    # print(path)
+
+    # plt.savefig(path)
+
+def plot_best_min(best_solutions_min):
+    epochs = range(1, len(best_solutions_min) + 1)
+    plt.plot(epochs, best_solutions_min)
+    plt.xlabel('Epoki')
+    plt.ylabel('Funkcja dopasowania')
+    plt.title('Wykres dopasowania dotychczasowego najlepszego osobnika: ' +
+              'epoki: ' + str(EPOCHS) + " pop.: " + str(POPULATION_SIZE) + " kara: " + str(LAMBDA_PENALTY) +
+              ' cross r.: ' + str(CROSS_P) + ' mut.r.: ' + str(MUTATE_P))
+    plt.show()
+    transponders_capacities = list(TRANSPONDER_COST.keys())
+    plot_name = ["epoki: ", str(EPOCHS), " pop.: ", str(POPULATION_SIZE), " kara: ", str(LAMBDA_PENALTY),
+                 " cross r.: ", str(CROSS_P), " mut.r.: ", str(MUTATE_P), " tr.1: ", str(transponders_capacities[0]),
+                 " tr.2: ", str(transponders_capacities[1]), " tr.3: ", str(transponders_capacities[2]), ".png"]
+    path_suf = ""
+    for p in plot_name:
+        path_suf += p
+    path = join(PLOT_PATH, path_suf)
     print("PLOT PATH")
     print(path)
-
-    plt.savefig(path)
 
 
 def loop():
     best_solutions = []
+    best_solutions_min_solution = []
     population = init_population(demands_, POPULATION_SIZE)
     for epoch in range(EPOCHS):
         print("------------------------------------------")
@@ -209,13 +227,16 @@ def loop():
         population = new_population
         best_individual = get_best_individual(population)
         print("BEST INDIVIDUAL FIT FUNCTION")
-        print(evaluate(best_individual))
-        best_solutions.append(evaluate(best_individual))
-
+        best_fit_individual = evaluate(best_individual)
+        print(best_fit_individual)
+        best_solutions.append(best_fit_individual)
+        if all(element > best_fit_individual for element in best_solutions_min_solution):
+            best_solutions_min_solution.append(best_fit_individual)
+        print(best_solutions_min_solution)
     plot_best(best_solutions)
+    plot_best_min(best_solutions_min_solution)
 
 
 if __name__ == '__main__':
     nodes_, links_, demands_ = fetch_structure_data("polska.xml")
     loop()
-    # pprint(population[0])
