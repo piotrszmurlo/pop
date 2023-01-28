@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 20
+EPOCHS = 45
 LAMBDA_PENALTY = 100
 POPULATION_SIZE = 10
 ELITE_SIZE = 0
 CROSS_P = 0.7
 MUTATE_P = 0.1
-MAX_LAMBDAS_USED = 70
+MAX_LAMBDAS_USED = 60
 
 
 def init_population(demands_, population_count):
@@ -225,12 +225,15 @@ def loop():
         new_population = create_new_population(population, demands_)
         population = new_population
         best_individual = get_best_individual(population)
-        best_fit_individual = evaluate(best_individual, True)
+        best_fit_individual = evaluate(best_individual)
         best_solutions.append(best_fit_individual)
         if all(element > best_fit_individual for element in best_solutions_min_solution):
             best_solutions_min_solution.append(best_fit_individual)
+            last_best = best_individual
+            evaluate(last_best, True)
         else:
             best_solutions_min_solution.append(best_solutions_min_solution[-1])
+            evaluate(last_best, True)
         print("BEST INDIVIDUAL FIT FUNCTION")
         print(best_solutions_min_solution[-1])
     plot_best(best_solutions)
