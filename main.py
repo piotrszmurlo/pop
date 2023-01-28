@@ -10,14 +10,10 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-<<<<<<< HEAD
-EPOCHS = 100
-=======
 EPOCHS = 20
->>>>>>> e153b22d9367624f0617bd88f17c1cd3c0d2aaab
 LAMBDA_PENALTY = 100
-POPULATION_SIZE = 100
-ELITE_SIZE = 10
+POPULATION_SIZE = 10
+ELITE_SIZE = 0
 CROSS_P = 0.7
 MUTATE_P = 0.1
 
