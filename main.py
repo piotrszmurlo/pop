@@ -10,13 +10,14 @@ import matplotlib.pyplot as plt
 
 PLOT_PATH = "/Users/maciekswiech/Desktop/PW/Sem7/POP/projekt/wykresy"
 
-EPOCHS = 100
+EPOCHS = 400
 LAMBDA_PENALTY = 100
-POPULATION_SIZE = 10
-ELITE_SIZE = 2
+POPULATION_SIZE = 100
+ELITE_SIZE = 20
 CROSS_P = 0.7
-MUTATE_P = 0.1
+MUTATE_P = 0.2
 MAX_LAMBDAS_USED = 96
+ANNEALING = True
 
 
 def init_population(demands_, population_count):
@@ -218,6 +219,9 @@ def plot_best_min(best_solutions_min):
 
 
 def loop():
+    global CROSS_P
+    global MUTATE_P
+    global ELITE_SIZE
     best_solutions = []
     best_solutions_min_solution = []
     population = init_population(demands_, POPULATION_SIZE)
@@ -238,6 +242,31 @@ def loop():
             evaluate(last_best, True)
         print("BEST INDIVIDUAL FIT FUNCTION")
         print(best_solutions_min_solution[-1])
+        
+        if ANNEALING:
+            if best_solutions_min_solution[-1] <= 600:
+                CROSS_P = 0.5
+                MUTATE_P = 0.05
+                ELITE_SIZE = 40
+            if best_solutions_min_solution[-1] <= 595:
+                CROSS_P = 0.5
+                MUTATE_P = 0.05
+                ELITE_SIZE = 40
+            if best_solutions_min_solution[-1] <= 590:
+                CROSS_P = 0.2
+                MUTATE_P = 0.02
+                ELITE_SIZE = 80
+            if best_solutions_min_solution[-1] <= 585:
+                CROSS_P = 0.1
+                MUTATE_P = 0.02
+                ELITE_SIZE = 85
+        print("CROSS:")
+        print(CROSS_P)
+        print("MUTATION:")
+        print(MUTATE_P)
+        print("ELITE:")
+        print(ELITE_SIZE)
+          
     # plot_best(best_solutions)
     # plot_best_min(best_solutions_min_solution)
     local_fig = plot_best(best_solutions)
